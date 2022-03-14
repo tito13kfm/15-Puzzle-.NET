@@ -21,7 +21,8 @@ namespace _15_Puzzle.NET
             {5, 6, 7, 8},
             {9, 10, 11, 12},
             {13, 14, 15, 0}
-};
+            };
+
             int blankRow = 0, blankCol = 0, moves = 0;
             var startTime = DateTime.Now;
             Random random = new Random();
