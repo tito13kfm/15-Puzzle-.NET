@@ -64,12 +64,13 @@ namespace _15_Puzzle.NET
                 //Call function to count number of correct positions
                 CountCorrect(board, winningBoard);
                 // If the number of correct positions, plus the row the blank tile is in, plus 1 is even, then it's a valid board
+                valid = false;
                 if ((correct + blankRow + 1) % 2 == 0)
                 {
                     valid = true;
                     return valid;
                 }
-                else { return valid; }
+                return valid;
             }
 
             int CountCorrect(int[,] tryBoard, int[,] checkBoard)
