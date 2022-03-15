@@ -26,6 +26,7 @@ namespace _15_Puzzle.NET
             bool valid;
             int blankRow = 0, blankCol = 0, moves = 0;
             var startTime = DateTime.Now;
+            string time;
             Random random = new Random();
             Console.Title = "15 Puzzle";
             Console.CursorVisible = false;
@@ -39,8 +40,10 @@ namespace _15_Puzzle.NET
                 if (correct == 16)
                 {
                     Console.Clear();
-                    Console.WriteLine("You Won in " + moves + " moves!!!!!");
-                    Console.WriteLine("Press any key to exit");
+                    Console.WriteLine("");
+                    Console.WriteLine("You Won in " + moves + " moves and  " + time + " seconds!!!!!");
+                    Console.WriteLine("");
+                    Console.WriteLine("                   Press any key to exit");
                     Console.ReadKey();
                 }
                 else { GetMove(); }
@@ -137,7 +140,7 @@ namespace _15_Puzzle.NET
                 }
 
                 var aTimer = DateTime.Now - startTime;
-                string time = aTimer.TotalSeconds.ToString("0.0");
+                time = aTimer.TotalSeconds.ToString("0.0");
                 Console.Title = "15 Puzzle - " + time + " seconds elapsed";
                 if (targetRow < 0 || targetCol < 0) { GetMove(); }
                 if (targetRow > 3 || targetCol > 3) { GetMove(); }
