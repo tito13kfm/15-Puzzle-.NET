@@ -79,7 +79,7 @@ namespace _15_Puzzle.NET
 
                     for (int j = 0; j < 4; j++)
                     {
-                        Console.Write("║  " + "  " + "   ");
+                        Console.Write("║       ");
                         if (board[i, j] == 0)
                         {
                             blankRow = i;
@@ -113,25 +113,21 @@ namespace _15_Puzzle.NET
                     case ConsoleKey.UpArrow:
                         targetRow = blankRow + 1;
                         targetCol = blankCol;
-                        moves++;
                         break;
                     case ConsoleKey.A:
                     case ConsoleKey.LeftArrow:
                         targetRow = blankRow;
                         targetCol = blankCol + 1;
-                        moves++;
                         break;
                     case ConsoleKey.S:
                     case ConsoleKey.DownArrow:
                         targetRow = blankRow - 1;
                         targetCol = blankCol;
-                        moves++;
                         break;
                     case ConsoleKey.D:
                     case ConsoleKey.RightArrow:
                         targetRow = blankRow;
                         targetCol = blankCol - 1;
-                        moves++;
                         break;
                     default:
                         targetRow = blankRow;
@@ -143,7 +139,8 @@ namespace _15_Puzzle.NET
                 time = aTimer.TotalSeconds.ToString("0.0");
                 Console.Title = "15 Puzzle - " + time + " seconds elapsed";
                 if (targetRow < 0 || targetCol < 0) { GetMove(); }
-                if (targetRow > 3 || targetCol > 3) { GetMove(); }
+                else if (targetRow > 3 || targetCol > 3) { GetMove(); }
+                else { moves++; }
                 int piece = board[targetRow, targetCol];
                 board[blankRow, blankCol] = piece;
                 board[targetRow, targetCol] = 0;
