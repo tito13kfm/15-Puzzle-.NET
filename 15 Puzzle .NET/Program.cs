@@ -19,20 +19,21 @@ namespace _15_Puzzle.NET
         private static void Main(string[] args)
         {
             //setup initial board state and winning board for reference
-            int[,] board = new int[4, 4] {
-            {1, 2, 3, 4},
-            {5, 6, 7, 8},
-            {9, 10, 11, 12},
-            {13, 14, 15, 0}
-};
-            int[,] winningBoard = new int[4, 4] {
-            {1, 2, 3, 4},
-            {5, 6, 7, 8},
-            {9, 10, 11, 12},
-            {13, 14, 15, 0}
-};
+            int[,] board = new int[4, 4] 
+            {
+                {1, 2, 3, 4},
+                {5, 6, 7, 8},
+                {9, 10, 11, 12},
+                {13, 14, 15, 0}
+            };
+            int[,] winningBoard = new int[4, 4] 
+            {
+                {1, 2, 3, 4},
+                {5, 6, 7, 8},
+                {9, 10, 11, 12},
+                {13, 14, 15, 0}
+            };
             int correct;
-            bool valid;
             int blankRow = 0, blankCol = 0, moves = 0;
             
             //Random number generator initialized
@@ -96,6 +97,8 @@ namespace _15_Puzzle.NET
                     }
                 }
 
+                //This counts the number of times the tile to the left in a pair of tiles is larger than the one following it
+                //unless the tile after it is the blank tile.  It also calculates the row of the blank tile
                 for (int i = 0; i < puzzle.Length; i++)
                 {
                     if (i % gridWidth == 0)
@@ -116,6 +119,7 @@ namespace _15_Puzzle.NET
                     }
                 }
 
+                //Included code in case this ever becomes more than a 15 puzzle, so that it will work with any board width
                 if (gridWidth % 2 == 0)
                 { // even grid
                     if (blankRow % 2 == 0)
@@ -138,7 +142,6 @@ namespace _15_Puzzle.NET
 
             int CountCorrect(int[,] tryBoard, int[,] checkBoard)
             {
-                valid = false;
                 correct = 0;
                 for (int i = 0; i < 4; i++)
                 {
