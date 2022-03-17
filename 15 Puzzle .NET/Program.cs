@@ -2,13 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Timers;
 using System.Threading.Tasks;
+using System.Media;
 
 namespace _15_Puzzle.NET
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static int time = 0;
+        private static void OnTimedEvent(object source, ElapsedEventArgs e)
+        {
+            time = time + 1;
+            Console.Title = "15 Puzzle - " + time + " seconds elapsed";
+        }
+        private static void Main(string[] args)
         {
             //setup initial board state and winning board for reference
             int[,] board = new int[4, 4] {
@@ -26,17 +34,28 @@ namespace _15_Puzzle.NET
             int correct;
             bool valid;
             int blankRow = 0, blankCol = 0, moves = 0;
-            var startTime = DateTime.Now;
-            string time;
             
             //Random number generator initialized
             Random random = new Random();
 
             Console.Title = "15 Puzzle";
             Console.CursorVisible = false;
-            
+
             InitBoard();
             PrintBoard();
+
+            Console.WriteLine("Press any key to begin.  Good luck");
+            Console.ReadKey();
+            Console.SetCursorPosition(0, 21);
+            Console.WriteLine("                                  ");
+
+            //Initialize a timer
+            Timer aTimer = new Timer();
+            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            aTimer.Interval = 1000;
+            aTimer.Enabled = true;
+
+
             GetMove();
 
             //Function to randomize board starting position
@@ -61,16 +80,60 @@ namespace _15_Puzzle.NET
 
             bool CheckValid(int[,] tryBoard, int[,] checkBoard)
             {
-                //Call function to count number of correct positions
-                CountCorrect(board, winningBoard);
-                // If the number of correct positions, plus the row the blank tile is in, plus 1 is even, then it's a valid board
-                valid = false;
-                if ((correct + blankRow + 1) % 2 == 0)
+                
+                int[] puzzle=new int[16];
+                int k = 0;
+                int parity = 0;
+                int gridWidth = (int)Math.Sqrt(puzzle.Length);
+                int row = 0;
+                //Put the array in to a 1 dimensional array
+                for (int i = 0; i < 4; i++)
                 {
-                    valid = true;
-                    return valid;
+                    for (int j=0; j < 4; j++)
+                    {
+                        puzzle[k] = board[i, j];
+                        k++;
+                    }
                 }
-                return valid;
+
+                for (int i = 0; i < puzzle.Length; i++)
+                {
+                    if (i % gridWidth == 0)
+                    { // advance to next row
+                        row++;
+                    }
+                    if (puzzle[i] == 0)
+                    { // the blank tile
+                        blankRow = row; // save the row on which encountered
+                        continue;
+                    }
+                    for (int j = i + 1; j < puzzle.Length; j++)
+                    {
+                        if (puzzle[i] > puzzle[j] && puzzle[j] != 0)
+                        {
+                            parity++;
+                        }
+                    }
+                }
+
+                if (gridWidth % 2 == 0)
+                { // even grid
+                    if (blankRow % 2 == 0)
+                    { // blank on odd row; counting from bottom
+                        return parity % 2 == 0;
+                    }
+                    else
+                    { // blank on even row; counting from bottom
+                        return parity % 2 != 0;
+                    }
+                }
+                else
+                { // odd grid
+                    return parity % 2 == 0;
+                }
+
+          
+
             }
 
             int CountCorrect(int[,] tryBoard, int[,] checkBoard)
@@ -127,11 +190,7 @@ namespace _15_Puzzle.NET
                         break;
                 }
 
-                //temporary location of timer function until I figure out classes
-                var aTimer = DateTime.Now - startTime;
-                time = aTimer.TotalSeconds.ToString("0.0");
-                Console.Title = "15 Puzzle - " + time + " seconds elapsed";
-                
+               
                 //Check if it's a valid move, and increment move counter
                 if (targetRow < 0 || targetCol < 0) { GetMove(); }
                 else if (targetRow > 3 || targetCol > 3) { GetMove(); }
@@ -180,6 +239,7 @@ namespace _15_Puzzle.NET
                 if (correct == 16)
                 {
                     Console.Clear();
+                    aTimer.Enabled = false;
                     Console.WriteLine("");
                     Console.WriteLine("You Won in " + moves + " moves and  " + time + " seconds!!!!!");
                     Console.WriteLine("");
