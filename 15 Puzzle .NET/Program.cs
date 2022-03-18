@@ -97,8 +97,7 @@ namespace _15_Puzzle.NET
                     }
                 }
 
-                //This counts the number of times the tile to the left in a pair of tiles is larger than the one following it
-                //unless the tile after it is the blank tile.  It also calculates the row of the blank tile
+                //This counts the number of times a tile is greater than the tiles to the right of it, not counting the blank tile.
                 for (int i = 0; i < puzzle.Length; i++)
                 {
                     if (i % gridWidth == 0)
