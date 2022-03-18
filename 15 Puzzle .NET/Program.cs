@@ -18,21 +18,13 @@ namespace _15_Puzzle.NET
         }
         private static void Main(string[] args)
         {
-            //setup initial board state and winning board for reference
-            int[,] board = new int[4, 4] 
-            {
-                {1, 2, 3, 4},
-                {5, 6, 7, 8},
-                {9, 10, 11, 12},
-                {13, 14, 15, 0}
-            };
-            int[,] winningBoard = new int[4, 4] 
-            {
-                {1, 2, 3, 4},
-                {5, 6, 7, 8},
-                {9, 10, 11, 12},
-                {13, 14, 15, 0}
-            };
+            int size=0;
+            bool valid = false;
+            GetBoardSize();
+            Console.SetWindowSize(size * 10, size * 6);
+            Console.SetBufferSize(size * 10, size * 6);
+            int[,] board = new int[size, size];
+            int[,] winningBoard = new int[size, size];
             int correct;
             int blankRow = 0, blankCol = 0, moves = 0;
             
@@ -43,11 +35,27 @@ namespace _15_Puzzle.NET
             Console.CursorVisible = false;
 
             InitBoard();
+
+            void InitBoard()
+            {
+                for (int i = 0; i < size; i++)
+                {
+                    for (int j = 0; j < size; j++)
+                    {
+                        board[i, j] = i * size + j + 1;                  
+                        winningBoard[i, j] = i*size+j+1;
+                        if (board[i, j] == size * size) { board[i, j] = 0; }
+                        if (winningBoard[i, j] == size*size) { winningBoard[i, j] = 0;}
+                    }
+                }
+            }
+
+            RandBoard();
             PrintBoard();
 
             Console.WriteLine("Press any key to begin.  Good luck");
             Console.ReadKey();
-            Console.SetCursorPosition(0, 21);
+            Console.SetCursorPosition(0, size*4 +5);
             Console.WriteLine("                                  ");
 
             //Initialize a timer
@@ -60,15 +68,15 @@ namespace _15_Puzzle.NET
             GetMove();
 
             //Function to randomize board starting position
-            void InitBoard()
+            void RandBoard()
             {
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < size; i++)
                 {
-                    for (int j = 0; j < 4; j++)
+                    for (int j = 0; j < size; j++)
                     {
-                        //Doing 16 swaps to randomize board
-                        int k = random.Next(4);
-                        int l = random.Next(4);
+                        //Doing size^2 swaps to randomize board
+                        int k = random.Next(size);
+                        int l = random.Next(size);
                         int tmp = board[i, j];
                         board[i, j] = board[k, l];
                         board[k, l] = tmp;
@@ -76,21 +84,21 @@ namespace _15_Puzzle.NET
                 }
                 //Check current board to see if it's winnable
                 if (CheckValid(board, winningBoard)) { return; }
-                else { InitBoard(); }
+                else { RandBoard(); }
             }
 
             bool CheckValid(int[,] tryBoard, int[,] checkBoard)
             {
                 
-                int[] puzzle=new int[16];
+                int[] puzzle=new int[size*size];
                 int k = 0;
                 int parity = 0;
                 int gridWidth = (int)Math.Sqrt(puzzle.Length);
                 int row = 0;
                 //Put the array in to a 1 dimensional array
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < size; i++)
                 {
-                    for (int j=0; j < 4; j++)
+                    for (int j=0; j < size; j++)
                     {
                         puzzle[k] = board[i, j];
                         k++;
@@ -142,9 +150,9 @@ namespace _15_Puzzle.NET
             int CountCorrect(int[,] tryBoard, int[,] checkBoard)
             {
                 correct = 0;
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < size; i++)
                 {
-                    for (int j = 0; j < 4; j++)
+                    for (int j = 0; j < size; j++)
                     {
                         if (tryBoard[i, j] == checkBoard[i, j])
                         {
@@ -195,7 +203,7 @@ namespace _15_Puzzle.NET
                
                 //Check if it's a valid move, and increment move counter
                 if (targetRow < 0 || targetCol < 0) { GetMove(); }
-                else if (targetRow > 3 || targetCol > 3) { GetMove(); }
+                else if (targetRow > size - 1 || targetCol > size - 1) { GetMove(); }
                 else { moves++; }
                 
                 //Swap selected tile with blank tile
@@ -212,11 +220,11 @@ namespace _15_Puzzle.NET
                 var sb = new StringBuilder();
 
                 //Append all the labels to the 16 spots on the board.
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < size; i++)
                 {
                     sb = new StringBuilder();
                     Console.SetCursorPosition(3, 4 * i + 3);
-                    for (int j = 0; j < 4; j++)
+                    for (int j = 0; j < size; j++)
                     {
                         sb.Append("║  " + displayValue(board[i, j]) + "   ");
                         if (board[i, j] == 0)
@@ -230,7 +238,7 @@ namespace _15_Puzzle.NET
                 }
                 
                 //Likely better way of doing this, but for now just move the cursor where I want it and write the move count
-                Console.SetCursorPosition(13, 20);
+                Console.SetCursorPosition(13, size*4+4);
                 Console.Write(moves);
                 return;
             }
@@ -238,7 +246,7 @@ namespace _15_Puzzle.NET
             void CheckWin()
             {
                 CountCorrect(board, winningBoard);
-                if (correct == 16)
+                if (correct == size*size)
                 {
                     Console.Clear();
                     aTimer.Enabled = false;
@@ -255,29 +263,33 @@ namespace _15_Puzzle.NET
             {
                 //Function to build and print the empty board.
                 Console.Clear();
-                Console.WriteLine("\n   ╔═══════╦═══════╦═══════╦═══════╗");
-                Console.WriteLine("   ║       ║       ║       ║       ║");
-
-                for (int i = 0; i < 4; i++)
+                string topbar="", middle="",seperator="",bottombar="";
+                for (int i = 0; i < size-1; i++)
                 {
-                    if (i > 0) { Console.WriteLine("   ║       ║       ║       ║       ║"); }
+                    topbar = topbar + "╦═══════";
+                    middle = middle + "║       ";
+                    seperator = seperator + "╠═══════";
+                    bottombar = bottombar + "╚═══════";
+                }
+                Console.WriteLine("\n   ╔═══════"+ topbar +"╗");
+                Console.WriteLine("   ║       " + middle + "║");
+
+                for (int i = 0; i < size; i++)
+                {
+                    if (i > 0) { Console.WriteLine("   ║       " + middle + "║"); }
                     Console.Write("   ");
 
-                    for (int j = 0; j < 4; j++)
+                    for (int j = 0; j < size; j++)
                     {
                         Console.Write("║       ");
-                        if (board[i, j] == 0)
-                        {
-                            blankRow = i;
-                            blankCol = j;
-                        }
+
                     }
 
                     Console.Write("║\n");
-                    Console.WriteLine("   ║       ║       ║       ║       ║");
+                    Console.WriteLine("   ║       " + middle + "║");
 
-                    if (i < 3) { Console.WriteLine("   ╠═══════╬═══════╬═══════╬═══════╣"); }
-                    else { Console.WriteLine("   ╚═══════╩═══════╩═══════╩═══════╝"); }
+                    if (i < size -1) { Console.WriteLine("   ╠═══════"+seperator+ "╣"); }
+                    else { Console.WriteLine("   ╚═══════"+bottombar+"╝"); }
 
                 }
 
@@ -292,7 +304,18 @@ namespace _15_Puzzle.NET
                 if (i < 10) { return " " + i.ToString(); }
                 return i.ToString();
             }
+            void GetBoardSize()
+            {
+                Console.WriteLine("How many Rows and Columns should I make the board (2 - 7) ?");
+                Console.WriteLine("Enter 4 for a standard 15 Puzzle");
+                while (!valid)
+                {
+                    valid = Int32.TryParse(Console.ReadLine(), out size);
+                }
+                if (size > 7 || size < 2) { Console.WriteLine("Invalid size input, defaulting to 4"); size = 4; }
+            }
 
         }
+
     }
 }
