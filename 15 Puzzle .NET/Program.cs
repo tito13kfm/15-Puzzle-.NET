@@ -21,8 +21,11 @@ namespace _15_Puzzle.NET
             int size=0;
             bool valid = false;
             GetBoardSize();
-            Console.SetWindowSize(size * 10, size * 6);
-            Console.SetBufferSize(size * 10, size * 6);
+            if (size > 3)
+            {
+                Console.SetWindowSize(size * 10, size * 4+8);
+                Console.SetBufferSize(size * 10, size * 4+8);
+            }
             int[,] board = new int[size, size];
             int[,] winningBoard = new int[size, size];
             int correct;
@@ -306,13 +309,13 @@ namespace _15_Puzzle.NET
             }
             void GetBoardSize()
             {
-                Console.WriteLine("How many Rows and Columns should I make the board (2 - 7) ?");
+                Console.WriteLine("How many Rows and Columns should I make the board (2 - 10) ?");
                 Console.WriteLine("Enter 4 for a standard 15 Puzzle");
                 while (!valid)
                 {
                     valid = Int32.TryParse(Console.ReadLine(), out size);
                 }
-                if (size > 7 || size < 2) { Console.WriteLine("Invalid size input, defaulting to 4"); size = 4; }
+                if (size > 10 || size < 2) { Console.WriteLine("Invalid size input, defaulting to 4"); size = 4; }
             }
 
         }
